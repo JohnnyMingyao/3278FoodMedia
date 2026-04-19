@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgis/postgis:16-3.4
+    container_name: foodie_postgres
+    environment:
+      POSTGRES_USER: foodie
+      POSTGRES_PASSWORD: foodie_pass
+      POSTGRES_DB: foodie_share
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U foodie -d foodie_share"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: foodie_backend
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: foodie
+      DB_PASSWORD: foodie_pass
+      DB_NAME: foodie_share
+      JWT_SECRET: foodie_jwt_secret_key_2026
+      NODE_ENV: production
+      PORT: 3001
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "3001:3001"
+
+  nginx:
+    image: nginx:alpine
+    container_name: foodie_nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./frontend/dist:/usr/share/nginx/html
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
