@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C /Users/johnnyliu/Documents/hku/Year3_sem2/COMP3278/GP diff frontend/src/pages/MyProfile.jsx)",
+      "Bash(npx remotion *)"
+    ]
+  }
+}

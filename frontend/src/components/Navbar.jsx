@@ -11,9 +11,9 @@ export default function Navbar() {
     left: 0,
     right: 0,
     height: 56,
-    backgroundColor: 'rgba(0,0,0,0.9)',
+    backgroundColor: 'rgba(255,255,255,0.95)',
     backdropFilter: 'blur(10px)',
-    borderBottom: '1px solid #222',
+    borderBottom: '1px solid #E8E8E0',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -22,7 +22,7 @@ export default function Navbar() {
   };
 
   const linkStyle = {
-    color: '#E5EEE4',
+    color: '#666',
     fontSize: 14,
     fontWeight: 500,
     padding: '8px 12px',
@@ -33,14 +33,14 @@ export default function Navbar() {
   const activeStyle = {
     ...linkStyle,
     backgroundColor: '#C0E1D2',
-    color: '#000',
+    color: '#1A3A2A',
   };
 
   const isActive = (path) => location.pathname === path;
 
   return (
     <nav style={navStyle}>
-      <Link to="/" style={{ fontFamily: 'Helvetica', fontSize: 20, fontWeight: 700, color: '#C0E1D2', textDecoration: 'none' }}>
+      <Link to="/" style={{ fontFamily: 'Helvetica', fontSize: 20, fontWeight: 700, color: '#4A9B7F', textDecoration: 'none' }}>
         Foodie Share
       </Link>
       <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>

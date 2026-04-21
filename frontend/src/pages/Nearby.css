@@ -1,0 +1,94 @@
+.nearby {
+  padding-top: 24px;
+  padding-bottom: 48px;
+}
+
+.nearby-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.nearby-title {
+  font-size: 24px;
+  color: #2D2D2D;
+}
+
+.nearby-search-btn {
+  background-color: #C0E1D2;
+  color: #1A3A2A;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+}
+
+.nearby-location {
+  color: #999;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.nearby-error {
+  color: red;
+  margin-bottom: 16px;
+}
+
+.nearby-empty {
+  color: #999;
+}
+
+.nearby-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.nearby-card {
+  display: flex;
+  gap: 16px;
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid #E8E8E0;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  text-decoration: none;
+}
+
+.nearby-card-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.nearby-card-content {
+  flex: 1;
+}
+
+.nearby-card-title {
+  color: #2D2D2D;
+  margin-bottom: 4px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.nearby-card-desc {
+  color: #888;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.nearby-card-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 13px;
+  color: #999;
+}
+
+.nearby-card-distance {
+  color: #4A9B7F;
+}

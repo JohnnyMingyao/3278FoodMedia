@@ -64,17 +64,6 @@ CREATE TABLE comments (
 );
 
 -- ============================================
--- Comment likes table
--- ============================================
-CREATE TABLE comment_likes (
-    id SERIAL PRIMARY KEY,
-    comment_id INTEGER REFERENCES comments(id) ON DELETE CASCADE NOT NULL,
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW(),
-    UNIQUE(comment_id, user_id)
-);
-
--- ============================================
 -- User stats table (maintained by triggers)
 -- ============================================
 CREATE TABLE user_stats (
@@ -119,7 +108,5 @@ CREATE INDEX idx_marks_user_id ON marks(user_id);
 CREATE INDEX idx_marks_post_id ON marks(post_id);
 CREATE INDEX idx_comments_post_id ON comments(post_id);
 CREATE INDEX idx_comments_user_id ON comments(user_id);
-CREATE INDEX idx_comment_likes_comment_id ON comment_likes(comment_id);
-
 -- PostGIS spatial index
 CREATE INDEX idx_posts_location ON posts USING GIST(location);

@@ -23,7 +23,7 @@ export default function Login() {
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
       <div style={{ width: '100%', maxWidth: 400 }}>
         <h1 style={{ fontSize: 32, marginBottom: 8, textAlign: 'center' }}>Foodie Share</h1>
-        <p style={{ color: '#888', textAlign: 'center', marginBottom: 32 }}>Sign in to your account</p>
+        <p style={{ color: '#999', textAlign: 'center', marginBottom: 32 }}>Sign in to your account</p>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <input
@@ -45,7 +45,7 @@ export default function Login() {
             type="submit"
             style={{
               backgroundColor: '#C0E1D2',
-              color: '#000',
+              color: '#1A3A2A',
               padding: '14px',
               borderRadius: 8,
               fontWeight: 600,
@@ -56,8 +56,8 @@ export default function Login() {
           </button>
         </form>
 
-        <p style={{ textAlign: 'center', marginTop: 24, color: '#888', fontSize: 14 }}>
-          Don't have an account? <Link to="/register" style={{ color: '#C0E1D2' }}>Sign up</Link>
+        <p style={{ textAlign: 'center', marginTop: 24, color: '#999', fontSize: 14 }}>
+          Don't have an account? <Link to="/register" style={{ color: '#4A9B7F' }}>Sign up</Link>
         </p>
       </div>
     </div>

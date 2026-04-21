@@ -46,29 +46,7 @@ AFTER INSERT OR DELETE ON marks
 FOR EACH ROW
 EXECUTE FUNCTION trg_fn_update_post_mark_count();
 
--- 3. Update comments.like_count when comment_likes changes
-CREATE OR REPLACE FUNCTION trg_fn_update_comment_like_count()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    IF TG_OP = 'INSERT' THEN
-        UPDATE comments SET like_count = like_count + 1 WHERE id = NEW.comment_id;
-        RETURN NEW;
-    ELSIF TG_OP = 'DELETE' THEN
-        UPDATE comments SET like_count = GREATEST(like_count - 1, 0) WHERE id = OLD.comment_id;
-        RETURN OLD;
-    END IF;
-    RETURN NULL;
-END;
-$$;
-
-CREATE TRIGGER trg_comment_like_count
-AFTER INSERT OR DELETE ON comment_likes
-FOR EACH ROW
-EXECUTE FUNCTION trg_fn_update_comment_like_count();
-
--- 4. Update user_stats when posts changes
+-- 3. Update user_stats when posts changes
 CREATE OR REPLACE FUNCTION trg_fn_update_user_stats()
 RETURNS TRIGGER
 LANGUAGE plpgsql
@@ -103,7 +81,7 @@ AFTER INSERT OR DELETE OR UPDATE OF like_count, mark_count ON posts
 FOR EACH ROW
 EXECUTE FUNCTION trg_fn_update_user_stats();
 
--- 5. Update user_stats comment_count when comments changes
+-- 4. Update user_stats comment_count when comments changes
 CREATE OR REPLACE FUNCTION trg_fn_update_user_comment_count()
 RETURNS TRIGGER
 LANGUAGE plpgsql
@@ -130,7 +108,7 @@ AFTER INSERT OR DELETE ON comments
 FOR EACH ROW
 EXECUTE FUNCTION trg_fn_update_user_comment_count();
 
--- 6. Refresh materialized view when posts changes
+-- 5. Refresh materialized view when posts changes
 CREATE OR REPLACE FUNCTION trg_fn_refresh_mv_top_posts()
 RETURNS TRIGGER
 LANGUAGE plpgsql

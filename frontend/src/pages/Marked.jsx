@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { users } from '../api';
+import './Marked.css';
 
 export default function Marked() {
   const [posts, setPosts] = useState([]);
@@ -22,66 +23,46 @@ export default function Marked() {
   if (loading) return <div className="container" style={{ paddingTop: 24 }}>Loading...</div>;
 
   return (
-    <div className="container" style={{ paddingTop: 24, paddingBottom: 48 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-        <h2 style={{ fontSize: 24 }}>Marked Restaurants</h2>
-        <div style={{ display: 'flex', gap: 8 }}>
+    <div className="container marked">
+      <div className="marked-header">
+        <h2 className="marked-title">Marked Restaurants</h2>
+        <div className="marked-sort-btns">
           <button
             onClick={() => setSortBy('likes')}
-            style={{
-              padding: '6px 14px',
-              borderRadius: 16,
-              background: sortBy === 'likes' ? '#C0E1D2' : '#1a1a1a',
-              color: sortBy === 'likes' ? '#000' : '#E5EEE4',
-              fontSize: 13,
-            }}
+            className={`marked-sort-btn ${sortBy === 'likes' ? 'active' : ''}`}
           >
             By Likes
           </button>
           <button
             onClick={() => setSortBy('time')}
-            style={{
-              padding: '6px 14px',
-              borderRadius: 16,
-              background: sortBy === 'time' ? '#C0E1D2' : '#1a1a1a',
-              color: sortBy === 'time' ? '#000' : '#E5EEE4',
-              fontSize: 13,
-            }}
+            className={`marked-sort-btn ${sortBy === 'time' ? 'active' : ''}`}
           >
             By Time
           </button>
         </div>
       </div>
 
-      {sortedPosts.length === 0 && <p style={{ color: '#666' }}>No marked restaurants yet.</p>}
+      {sortedPosts.length === 0 && <p className="marked-empty">No marked restaurants yet.</p>}
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div className="marked-list">
         {sortedPosts.map((post) => (
           <Link
             key={post.id}
             to={`/post/${post.id}`}
-            style={{
-              display: 'flex',
-              gap: 16,
-              backgroundColor: '#111',
-              borderRadius: 12,
-              padding: 16,
-              border: '1px solid #222',
-              textDecoration: 'none',
-            }}
+            className="marked-card"
           >
             <img
               src={post.image_url}
               alt={post.restaurant_name}
-              style={{ width: 80, height: 80, borderRadius: 8, objectFit: 'cover' }}
+              className="marked-card-image"
               onError={(e) => { e.target.src = '/default-food.png'; }}
             />
-            <div style={{ flex: 1 }}>
-              <h4 style={{ color: '#F6F4E8', marginBottom: 4 }}>{post.restaurant_name}</h4>
-              <p style={{ color: '#888', fontSize: 13, marginBottom: 8, lineClamp: 2, overflow: 'hidden' }}>
+            <div className="marked-card-content">
+              <h4 className="marked-card-title">{post.restaurant_name}</h4>
+              <p className="marked-card-desc">
                 {post.description}
               </p>
-              <div style={{ display: 'flex', gap: 12, fontSize: 13, color: '#666' }}>
+              <div className="marked-card-meta">
                 <span>❤️ {post.like_count || 0}</span>
                 <span>by {post.username}</span>
                 <span>{new Date(post.created_at).toLocaleDateString()}</span>

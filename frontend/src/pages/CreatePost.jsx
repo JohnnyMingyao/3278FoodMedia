@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { posts } from '../api';
+import './CreatePost.css';
 
 export default function CreatePost() {
   const [form, setForm] = useState({
@@ -55,12 +56,12 @@ export default function CreatePost() {
   };
 
   return (
-    <div className="container" style={{ paddingTop: 24, paddingBottom: 48 }}>
-      <h2 style={{ fontSize: 24, marginBottom: 24 }}>Create Post</h2>
+    <div className="container create-post">
+      <h2 className="create-post-title">Create Post</h2>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 600 }}>
-        <div>
-          <label style={{ display: 'block', fontSize: 14, color: '#888', marginBottom: 6 }}>Image URL</label>
+      <form onSubmit={handleSubmit} className="create-post-form">
+        <div className="create-post-field">
+          <label className="create-post-label">Image URL</label>
           <input
             type="text"
             placeholder="https://example.com/food.jpg (optional)"
@@ -71,14 +72,14 @@ export default function CreatePost() {
             <img
               src={form.image_url}
               alt="Preview"
-              style={{ width: '100%', height: 200, objectFit: 'cover', borderRadius: 8, marginTop: 8 }}
+              className="create-post-preview"
               onError={(e) => { e.target.style.display = 'none'; }}
             />
           )}
         </div>
 
-        <div>
-          <label style={{ display: 'block', fontSize: 14, color: '#888', marginBottom: 6 }}>Restaurant Name</label>
+        <div className="create-post-field">
+          <label className="create-post-label">Restaurant Name</label>
           <input
             type="text"
             placeholder="Where did you eat?"
@@ -88,8 +89,8 @@ export default function CreatePost() {
           />
         </div>
 
-        <div>
-          <label style={{ display: 'block', fontSize: 14, color: '#888', marginBottom: 6 }}>Description</label>
+        <div className="create-post-field">
+          <label className="create-post-label">Description</label>
           <textarea
             placeholder="Tell us about your experience..."
             value={form.description}
@@ -98,41 +99,28 @@ export default function CreatePost() {
           />
         </div>
 
-        <div>
-          <label style={{ display: 'block', fontSize: 14, color: '#888', marginBottom: 6 }}>Location</label>
-          <div style={{ display: 'flex', gap: 12 }}>
+        <div className="create-post-field">
+          <label className="create-post-label">Location</label>
+          <div className="create-post-location-row">
             <input type="text" placeholder="Latitude" value={form.lat} onChange={(e) => setForm({ ...form, lat: e.target.value })} />
             <input type="text" placeholder="Longitude" value={form.lng} onChange={(e) => setForm({ ...form, lng: e.target.value })} />
           </div>
           <button
             type="button"
             onClick={useCurrentLocation}
-            style={{
-              marginTop: 8,
-              background: 'none',
-              color: '#C0E1D2',
-              fontSize: 13,
-              textDecoration: 'underline',
-            }}
+            className="create-post-location-btn"
           >
             Use current location
           </button>
         </div>
 
-        {error && <p style={{ color: 'red', fontSize: 14 }}>{error}</p>}
+        {error && <p className="create-post-error">{error}</p>}
 
         <button
           type="submit"
           disabled={submitting}
-          style={{
-            backgroundColor: '#C0E1D2',
-            color: '#000',
-            padding: '14px',
-            borderRadius: 8,
-            fontWeight: 600,
-            fontSize: 15,
-            opacity: submitting ? 0.7 : 1,
-          }}
+          className="create-post-submit"
+          style={{ opacity: submitting ? 0.7 : 1 }}
         >
           {submitting ? 'Posting...' : 'Publish Post'}
         </button>

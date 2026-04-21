@@ -55,26 +55,16 @@ BEGIN
 END;
 $$;
 
--- 6. Like a comment
-CREATE OR REPLACE PROCEDURE like_comment(p_user_id INT, p_comment_id INT)
+-- 6. Increment comment like count (no per-user tracking)
+CREATE OR REPLACE PROCEDURE increment_comment_likes(p_comment_id INT)
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    INSERT INTO comment_likes (comment_id, user_id) VALUES (p_comment_id, p_user_id)
-    ON CONFLICT (comment_id, user_id) DO NOTHING;
+    UPDATE comments SET like_count = like_count + 1 WHERE id = p_comment_id;
 END;
 $$;
 
--- 7. Unlike a comment
-CREATE OR REPLACE PROCEDURE unlike_comment(p_user_id INT, p_comment_id INT)
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    DELETE FROM comment_likes WHERE user_id = p_user_id AND comment_id = p_comment_id;
-END;
-$$;
-
--- 8. Get user feed with like/mark status
+-- 7. Get user feed with like/mark status
 CREATE OR REPLACE FUNCTION get_user_feed(
     p_user_id INT,
     p_sort_by VARCHAR DEFAULT 'likes',
@@ -122,7 +112,7 @@ BEGIN
 END;
 $$;
 
--- 9. Get nearby marked posts
+-- 8. Get nearby marked posts
 CREATE OR REPLACE FUNCTION get_nearby_marks(
     p_user_id INT,
     p_lat DOUBLE PRECISION,
@@ -173,7 +163,7 @@ BEGIN
 END;
 $$;
 
--- 10. Get post comments with author info
+-- 9. Get post comments with author info
 CREATE OR REPLACE FUNCTION get_post_comments(p_post_id INT)
 RETURNS TABLE (
     id INT,
@@ -207,7 +197,7 @@ BEGIN
 END;
 $$;
 
--- 11. Get user profile stats
+-- 10. Get user profile stats
 CREATE OR REPLACE FUNCTION get_user_profile_stats(p_user_id INT)
 RETURNS TABLE (
     user_id INT,
@@ -236,7 +226,7 @@ BEGIN
 END;
 $$;
 
--- 12. Get top posts leaderboard
+-- 11. Get top posts leaderboard
 CREATE OR REPLACE FUNCTION get_top_posts(p_limit INT DEFAULT 10)
 RETURNS TABLE (
     id INT,
@@ -270,7 +260,7 @@ BEGIN
 END;
 $$;
 
--- 13. Get top users leaderboard
+-- 12. Get top users leaderboard
 CREATE OR REPLACE FUNCTION get_top_users(p_limit INT DEFAULT 10)
 RETURNS TABLE (
     user_id INT,
@@ -300,7 +290,7 @@ BEGIN
 END;
 $$;
 
--- 14. Get geographic clusters of marked posts using DBSCAN
+-- 13. Get geographic clusters of marked posts using DBSCAN
 CREATE OR REPLACE FUNCTION get_geo_clusters(
     p_min_points INT DEFAULT 3,
     p_eps_meters INT DEFAULT 500

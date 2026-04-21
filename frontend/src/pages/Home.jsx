@@ -33,17 +33,7 @@ export default function Home() {
       } else {
         await posts.like(postId);
       }
-      setPostList((prev) =>
-        prev.map((p) =>
-          p.id === postId
-            ? {
-                ...p,
-                user_has_liked: !p.user_has_liked,
-                like_count: p.user_has_liked ? p.like_count - 1 : p.like_count + 1,
-              }
-            : p
-        )
-      );
+      fetchPosts();
     } catch (err) {
       console.error(err);
     }
@@ -58,17 +48,7 @@ export default function Home() {
       } else {
         await posts.mark(postId);
       }
-      setPostList((prev) =>
-        prev.map((p) =>
-          p.id === postId
-            ? {
-                ...p,
-                user_has_marked: !p.user_has_marked,
-                mark_count: p.user_has_marked ? p.mark_count - 1 : p.mark_count + 1,
-              }
-            : p
-        )
-      );
+      fetchPosts();
     } catch (err) {
       console.error(err);
     }
@@ -82,10 +62,11 @@ export default function Home() {
           style={{
             padding: '8px 16px',
             borderRadius: 20,
-            background: sortBy === 'likes' ? '#C0E1D2' : '#1a1a1a',
-            color: sortBy === 'likes' ? '#000' : '#E5EEE4',
+            background: sortBy === 'likes' ? '#C0E1D2' : '#fff',
+            color: sortBy === 'likes' ? '#1A3A2A' : '#666',
             fontSize: 14,
             fontWeight: 500,
+            border: '1px solid #E8E8E0',
           }}
         >
           Popular
@@ -95,17 +76,18 @@ export default function Home() {
           style={{
             padding: '8px 16px',
             borderRadius: 20,
-            background: sortBy === 'time' ? '#C0E1D2' : '#1a1a1a',
-            color: sortBy === 'time' ? '#000' : '#E5EEE4',
+            background: sortBy === 'time' ? '#C0E1D2' : '#fff',
+            color: sortBy === 'time' ? '#1A3A2A' : '#666',
             fontSize: 14,
             fontWeight: 500,
+            border: '1px solid #E8E8E0',
           }}
         >
           Latest
         </button>
       </div>
 
-      {loading && <p style={{ textAlign: 'center', color: '#888' }}>Loading...</p>}
+      {loading && <p style={{ textAlign: 'center', color: '#999' }}>Loading...</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
       {postList.map((post) => (

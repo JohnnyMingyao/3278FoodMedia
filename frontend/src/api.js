@@ -39,6 +39,10 @@ export const posts = {
   addComment: (id, body) => api(`/api/posts/${id}/comments`, { method: 'POST', body: JSON.stringify(body) }),
 };
 
+export const commentLikes = {
+  like: (commentId) => api(`/api/comments/${commentId}/like`, { method: 'POST' }),
+};
+
 export const users = {
   get: (username) => api(`/api/users/${username}`),
   getPosts: (username) => api(`/api/users/${username}/posts`),
