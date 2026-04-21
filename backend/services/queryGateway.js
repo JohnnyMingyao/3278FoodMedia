@@ -1,7 +1,7 @@
 const db = require('../db');
 
-// Query Gateway: maps action names to stored procedures or SQL queries
-// All read operations go through this gateway - zero raw SQL in route handlers
+// Maps action names to stored procedures or raw SQL.
+// All read operations go through here so route handlers stay clean.
 
 const QUERY_MAP = {
   feed: {

@@ -8,8 +8,7 @@ function authMiddleware(req, res, next) {
   }
 
   try {
-    const decoded = jwt.verify(token, config.jwt.secret);
-    req.user = decoded;
+    req.user = jwt.verify(token, config.jwt.secret);
     next();
   } catch (err) {
     return res.status(401).json({ error: 'Unauthorized: invalid token' });

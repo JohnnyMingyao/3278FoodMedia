@@ -4,7 +4,7 @@ const authMiddleware = require('../middleware/auth');
 
 const router = express.Router();
 
-// List posts (feed)
+// feed
 router.get('/', authMiddleware, async (req, res, next) => {
   try {
     const { sort = 'likes', limit = 20, offset = 0 } = req.query;
@@ -19,7 +19,6 @@ router.get('/', authMiddleware, async (req, res, next) => {
   }
 });
 
-// Create post
 router.post('/', authMiddleware, async (req, res, next) => {
   try {
     const { image_url, description, restaurant_name, lat, lng } = req.body;
@@ -43,7 +42,7 @@ router.post('/', authMiddleware, async (req, res, next) => {
   }
 });
 
-// Get comments (must come before /:id to avoid shadowing)
+// /:id/comments must be registered before /:id so express doesn't shadow it
 router.get('/:id/comments', async (req, res, next) => {
   try {
     const postId = parseInt(req.params.id);
@@ -54,7 +53,6 @@ router.get('/:id/comments', async (req, res, next) => {
   }
 });
 
-// Add comment
 router.post('/:id/comments', authMiddleware, async (req, res, next) => {
   try {
     const postId = parseInt(req.params.id);
@@ -65,14 +63,15 @@ router.post('/:id/comments', authMiddleware, async (req, res, next) => {
       return res.status(400).json({ error: 'Content is required' });
     }
 
-    await db.query('CALL add_comment($1, $2, $3, $4)', [userId, postId, content.trim(), is_tasted || false]);
+    await db.query('CALL add_comment($1, $2, $3, $4)', [
+      userId, postId, content.trim(), is_tasted || false,
+    ]);
     res.status(201).json({ message: 'Comment added' });
   } catch (err) {
     next(err);
   }
 });
 
-// Get single post (must come after specific /:id/* routes)
 router.get('/:id', authMiddleware, async (req, res, next) => {
   try {
     const postId = parseInt(req.params.id);
@@ -89,72 +88,64 @@ router.get('/:id', authMiddleware, async (req, res, next) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Post not found' });
     }
-
     res.json({ post: result.rows[0] });
   } catch (err) {
     next(err);
   }
 });
 
-// Delete post
 router.delete('/:id', authMiddleware, async (req, res, next) => {
   try {
     const postId = parseInt(req.params.id);
     const userId = req.user.userId;
 
-    const result = await db.query('DELETE FROM posts WHERE id = $1 AND user_id = $2 RETURNING id', [postId, userId]);
+    const result = await db.query(
+      'DELETE FROM posts WHERE id = $1 AND user_id = $2 RETURNING id',
+      [postId, userId]
+    );
     if (result.rows.length === 0) {
       return res.status(403).json({ error: 'Not authorized or post not found' });
     }
-
     res.json({ message: 'Post deleted' });
   } catch (err) {
     next(err);
   }
 });
 
-// Like post
 router.post('/:id/like', authMiddleware, async (req, res, next) => {
   try {
     const postId = parseInt(req.params.id);
-    const userId = req.user.userId;
-    await db.query('CALL like_post($1, $2)', [userId, postId]);
+    await db.query('CALL like_post($1, $2)', [req.user.userId, postId]);
     res.json({ message: 'Liked' });
   } catch (err) {
     next(err);
   }
 });
 
-// Unlike post
 router.delete('/:id/like', authMiddleware, async (req, res, next) => {
   try {
     const postId = parseInt(req.params.id);
-    const userId = req.user.userId;
-    await db.query('CALL unlike_post($1, $2)', [userId, postId]);
+    await db.query('CALL unlike_post($1, $2)', [req.user.userId, postId]);
     res.json({ message: 'Unliked' });
   } catch (err) {
     next(err);
   }
 });
 
-// Mark post
 router.post('/:id/mark', authMiddleware, async (req, res, next) => {
   try {
     const postId = parseInt(req.params.id);
-    const userId = req.user.userId;
-    await db.query('CALL mark_post($1, $2)', [userId, postId]);
+    await db.query('CALL mark_post($1, $2)', [req.user.userId, postId]);
     res.json({ message: 'Marked' });
   } catch (err) {
     next(err);
   }
 });
 
-// Unmark post
 router.delete('/:id/mark', authMiddleware, async (req, res, next) => {
   try {
     const postId = parseInt(req.params.id);
-    const userId = req.user.userId;
-    await db.query('CALL unmark_post($1, $2)', [userId, postId]);
+    await db.query('CALL unmark_post($1, $2)', [req.user.userId, postId]);
     res.json({ message: 'Unmarked' });
   } catch (err) {
     next(err);

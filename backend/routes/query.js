@@ -4,8 +4,7 @@ const { execute } = require('../services/queryGateway');
 
 const router = express.Router();
 
-// Query Gateway: unified endpoint for all read operations
-// Maps action names to stored procedures / pre-defined SQL
+// unified read endpoint — maps action names to predefined queries
 router.post('/', authMiddleware, async (req, res, next) => {
   try {
     const { action, params = {} } = req.body;
@@ -13,9 +12,8 @@ router.post('/', authMiddleware, async (req, res, next) => {
       return res.status(400).json({ error: 'action is required' });
     }
 
-    // Inject viewer user_id into params for personalized queries
+    // always inject the authenticated user's id
     const queryParams = { ...params, user_id: req.user.userId };
-
     const data = await execute(action, queryParams);
     res.json({ action, data });
   } catch (err) {

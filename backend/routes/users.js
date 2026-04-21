@@ -4,10 +4,13 @@ const authMiddleware = require('../middleware/auth');
 
 const router = express.Router();
 
-// Get current user profile with stats (must come before /:username)
+// /me routes need to be before /:username so they don't get caught by the param
 router.get('/me/profile', authMiddleware, async (req, res, next) => {
   try {
-    const result = await db.query('SELECT * FROM get_user_profile_stats($1)', [req.user.userId]);
+    const result = await db.query(
+      'SELECT * FROM get_user_profile_stats($1)',
+      [req.user.userId]
+    );
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -17,13 +20,13 @@ router.get('/me/profile', authMiddleware, async (req, res, next) => {
   }
 });
 
-// Update current user's avatar
 router.patch('/me/avatar', authMiddleware, async (req, res, next) => {
   try {
     const { avatar_url } = req.body;
     if (!avatar_url || avatar_url.trim() === '') {
       return res.status(400).json({ error: 'Avatar URL is required' });
     }
+
     const result = await db.query(
       'UPDATE users SET avatar_url = $1 WHERE id = $2 RETURNING id, username, avatar_url',
       [avatar_url.trim(), req.user.userId]
@@ -34,7 +37,6 @@ router.patch('/me/avatar', authMiddleware, async (req, res, next) => {
   }
 });
 
-// Get current user's marks
 router.get('/me/marks', authMiddleware, async (req, res, next) => {
   try {
     const userId = req.user.userId;
@@ -54,11 +56,13 @@ router.get('/me/marks', authMiddleware, async (req, res, next) => {
   }
 });
 
-// Get user by username (public profile)
 router.get('/:username', async (req, res, next) => {
   try {
     const { username } = req.params;
-    const result = await db.query('SELECT id, username, avatar_url, created_at FROM users WHERE username = $1', [username]);
+    const result = await db.query(
+      'SELECT id, username, avatar_url, created_at FROM users WHERE username = $1',
+      [username]
+    );
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -68,7 +72,6 @@ router.get('/:username', async (req, res, next) => {
   }
 });
 
-// Get posts by username
 router.get('/:username/posts', authMiddleware, async (req, res, next) => {
   try {
     const { username } = req.params;
@@ -88,7 +91,6 @@ router.get('/:username/posts', authMiddleware, async (req, res, next) => {
        WHERE p.user_id = $1 ORDER BY p.created_at DESC`,
       [targetUserId, viewerId]
     );
-
     res.json({ posts: result.rows });
   } catch (err) {
     next(err);
