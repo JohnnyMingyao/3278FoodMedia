@@ -132,3 +132,6 @@ Single-machine all-in-one architecture, all services run on the same Linux VPS, 
 | Source Code (zip) | Relational database design, Text-to-SQL query system, data visualization UI, deployable website |
 | Database Scripts | Schema, stored procedures, triggers, materialized views, seed data |
 | Docker Compose | One-click startup for the complete application stack |
+
+## How to run
+Read Developer_guide.md to get detialed information. 
