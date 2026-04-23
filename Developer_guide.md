@@ -1,109 +1,109 @@
 # Foodie Share - Developer Guide
 
-## 1. 项目概述
+## 1. Project Overview
 
-Foodie Share 是一个美食分享社交社区应用，使用 React + Node.js + PostgreSQL + Docker 技术栈。
+Foodie Share is a food-sharing social community application using the React + Node.js + PostgreSQL + Docker technology stack.
 
 ---
 
-## 2. 环境准备
+## 2. Environment Setup
 
-### 2.1 必备工具
+### 2.1 Required Tools
 
-- **Docker Desktop**（或 Docker Engine + Docker Compose）
+- **Docker Desktop** (or Docker Engine + Docker Compose)
 - **Node.js 20+**
-- **VS Code**（推荐）+ SQLTools 插件（PostgreSQL Driver）
+- **VS Code** (recommended) + SQLTools extension (PostgreSQL Driver)
 - **Git**
 
-### 2.2 项目结构
+### 2.2 Project Structure
 
 ```
 GP/
 ├── backend/          # Node.js + Express API
 ├── frontend/         # React + Vite
 ├── db/
-│   └── init/         # 数据库初始化脚本（表、存储过程、触发器）
+│   └── init/         # Database initialization scripts (tables, stored procedures, triggers)
 ├── docker-compose.yml
 ├── nginx.conf
-└── Developer_guide.md  # 本文档
+└── Developer_guide.md  # This document
 ```
 
 ---
 
-## 3. Docker 运行（完整部署）
+## 3. Docker Deployment (Full Stack)
 
-### 3.1 启动所有服务
+### 3.1 Start All Services
 
-在项目根目录（`GP/`）执行：
+In the project root directory (`GP/`):
 
 ```bash
 docker-compose up -d
 ```
 
-这会启动三个容器：
+This starts three containers:
 - `foodie_postgres` — PostgreSQL 16 + PostGIS
-- `foodie_backend` — Node.js API（端口 3001）
-- `foodie_nginx` — Nginx 反向代理（端口 80）
+- `foodie_backend` — Node.js API (port 3001)
+- `foodie_nginx` — Nginx reverse proxy (port 80)
 
-### 3.2 查看容器状态
+### 3.2 Check Container Status
 
 ```bash
 docker ps
 ```
 
-### 3.3 查看日志
+### 3.3 View Logs
 
 ```bash
-# 查看所有服务日志
+# View all service logs
 docker-compose logs -f
 
-# 只看某个服务
+# View specific service only
 docker-compose logs -f backend
 docker-compose logs -f postgres
 ```
 
-### 3.4 停止服务
+### 3.4 Stop Services
 
 ```bash
 docker-compose down
 ```
 
-**注意：** `down` 保留数据库数据（Volume 不会被删除）。如需彻底重置数据库：
+**Note:** `down` preserves database data (Volume is not deleted). To completely reset the database:
 
 ```bash
-docker-compose down -v   # -v 会删除 postgres_data volume，所有数据丢失
-docker-compose up -d     # 重新创建并执行 db/init/*.sql
+docker-compose down -v   # -v deletes postgres_data volume, all data is lost
+docker-compose up -d     # Recreate and execute db/init/*.sql
 ```
 
-### 3.5 后端代码修改后重新构建
+### 3.5 Rebuild Backend After Code Changes
 
-`docker-compose.yml` 中后端服务没有挂载 Volume，修改代码后需要重新构建镜像：
+The backend service in `docker-compose.yml` does not mount a Volume, so you need to rebuild the image after modifying code:
 
 ```bash
 docker-compose up -d --build backend
 ```
 
-前端代码修改后**不需要**重新构建，Vite 开发服务器会自动热更新。
+Frontend code changes do **not** require rebuilding; the Vite dev server automatically hot-reloads.
 
 ---
 
-## 4. 前端开发（热更新模式）
+## 4. Frontend Development (Hot Reload Mode)
 
-前端使用 Vite 开发服务器，修改代码后页面自动刷新。
+The frontend uses the Vite dev server; the page automatically refreshes after code changes.
 
-### 4.1 单独启动前端
+### 4.1 Start Frontend Alone
 
 ```bash
 cd frontend
-npm install    # 首次运行
+npm install    # First time only
 npm run dev
 ```
 
-默认在 `http://localhost:5174`（已在 `vite.config.js` 中改为 5174）。
+Defaults to `http://localhost:5174` (already configured to 5174 in `vite.config.js`).
 
-### 4.2 代理配置
+### 4.2 Proxy Configuration
 
-`frontend/vite.config.js` 中已配置代理：
+Proxy is configured in `frontend/vite.config.js`:
 
 ```javascript
 proxy: {
@@ -114,43 +114,43 @@ proxy: {
 }
 ```
 
-这意味着前端请求 `/api/xxx` 会自动转发到后端的 `http://localhost:3001/api/xxx`。
+This means frontend requests to `/api/xxx` are automatically forwarded to the backend at `http://localhost:3001/api/xxx`.
 
-### 4.3 开发时的工作流
+### 4.3 Development Workflow
 
-推荐同时开两个终端：
+It is recommended to open two terminals simultaneously:
 
-**终端 1 — 运行 Docker（数据库 + 后端）：**
+**Terminal 1 — Run Docker (database + backend):**
 ```bash
 docker-compose up -d
 ```
 
-**终端 2 — 运行前端开发服务器：**
+**Terminal 2 — Run frontend dev server:**
 ```bash
 cd frontend && npm run dev
 ```
 
-然后访问 `http://localhost:5174` 进行开发。
+Then visit `http://localhost:5174` for development.
 
 ---
 
-## 5. 数据库访问（VS Code SQLTools）
+## 5. Database Access (VS Code SQLTools)
 
-### 5.1 安装插件
+### 5.1 Install Extensions
 
-1. 打开 VS Code → Extensions（侧边栏四个方块图标）
-2. 搜索并安装：
-   - `SQLTools`（作者：Matheus Teixeira）
+1. Open VS Code → Extensions (sidebar four-square icon)
+2. Search and install:
+   - `SQLTools` (by Matheus Teixeira)
    - `SQLTools PostgreSQL Driver`
 
-### 5.2 添加连接
+### 5.2 Add Connection
 
-1. 按 `Ctrl+Shift+P`（Mac: `Cmd+Shift+P`）
-2. 输入 `SQLTools: Add New Connection`
-3. 选择 **PostgreSQL**
-4. 填写配置：
+1. Press `Ctrl+Shift+P` (Mac: `Cmd+Shift+P`)
+2. Type `SQLTools: Add New Connection`
+3. Select **PostgreSQL**
+4. Fill in configuration:
 
-| 字段 | 值 |
+| Field | Value |
 |-----|-----|
 | Connection Name | Foodie Share |
 | Server Address | localhost |
@@ -160,130 +160,130 @@ cd frontend && npm run dev
 | Password | foodie_pass |
 | SSL | Disabled |
 
-5. 点击 **Test Connection** → 成功后点击 **Save Connection**
+5. Click **Test Connection** → After success, click **Save Connection**
 
-### 5.3 浏览数据
+### 5.3 Browse Data
 
-左侧 SQLTools 面板展开连接：
-- `foodie_share` → `Tables` → 双击表名查看数据
-- 点击表名右侧的 🔍 图标查看表记录
-- 点击 📝 图标生成查询模板
+Expand the connection in the left SQLTools panel:
+- `foodie_share` → `Tables` → Double-click table name to view data
+- Click the 🔍 icon next to table name to view records
+- Click the 📝 icon to generate query templates
 
-### 5.4 执行 SQL 查询
+### 5.4 Execute SQL Queries
 
-在 SQLTools 查询编辑器中输入 SQL，选中后点击右上角的 ▶️ 执行：
+Enter SQL in the SQLTools query editor, select it, and click the ▶️ icon in the top right to execute:
 
 ```sql
--- 查看所有用户
+-- View all users
 SELECT * FROM users;
 
--- 查看帖子及作者
+-- View posts and authors
 SELECT p.id, p.restaurant_name, u.username, p.like_count
 FROM posts p JOIN users u ON p.user_id = u.id;
 
--- 查看某条帖子的评论
+-- View comments on a specific post
 SELECT * FROM comments WHERE post_id = 1;
 
--- 查看存储过程列表
+-- List all stored procedures
 \df
 
--- 查看触发器
+-- View triggers
 SELECT * FROM pg_trigger WHERE tgname LIKE 'trg_%';
 ```
 
-### 5.5 删除记录
+### 5.5 Delete Records
 
-**方式一：直接写 DELETE 语句（推荐）**
+**Method 1: Direct DELETE statement (recommended)**
 
 ```sql
--- 删除指定评论
+-- Delete specific comment
 DELETE FROM comments WHERE id = 1;
 
--- 删除指定帖子（级联删除其评论、点赞、收藏记录）
+-- Delete specific post (cascades to comments, likes, marks)
 DELETE FROM posts WHERE id = 1;
 
--- 删除指定用户（级联删除其所有帖子、评论、点赞、收藏）
+-- Delete specific user (cascades to all posts, comments, likes, marks)
 DELETE FROM users WHERE id = 1;
 ```
 
-**方式二：右键生成删除语句**
+**Method 2: Right-click to generate delete statement**
 
-1. 左侧 SQLTools 面板找到目标表
-2. 右键表名 → `Generate Insert/Update/Delete Query` → 选择 `Delete`
-3. 在生成的模板中填写 WHERE 条件
-4. 选中 SQL，点击 ▶️ 执行
+1. Find the target table in the left SQLTools panel
+2. Right-click table name → `Generate Insert/Update/Delete Query` → Select `Delete`
+3. Fill in the WHERE condition in the generated template
+4. Select the SQL and click ▶️ to execute
 
-**重要提示：**
-- 所有外键都设置了 `ON DELETE CASCADE`，删除用户或帖子会自动清理关联数据
-- `comments.like_count`、`posts.like_count`、`posts.mark_count` 等字段由触发器自动维护，不要手动修改
+**Important Notes:**
+- All foreign keys are set with `ON DELETE CASCADE`; deleting a user or post automatically cleans up associated data
+- `comments.like_count`, `posts.like_count`, `posts.mark_count` and other fields are automatically maintained by triggers; do not manually modify them
 
-### 5.6 常见问题
+### 5.6 Common Issues
 
-| 问题 | 原因 | 解决 |
+| Issue | Cause | Solution |
 |-----|------|------|
-| 连接被拒绝 | Docker 容器未运行 | `docker ps` 确认 `foodie_postgres` 状态为 Up |
-| 认证失败 | 用户名/密码/数据库名错误 | 检查 `docker-compose.yml` 中的环境变量 |
-| 端口被占用 | 本地有其他 PostgreSQL 实例 | `lsof -i :5432` 查看占用进程 |
+| Connection refused | Docker container not running | `docker ps` to confirm `foodie_postgres` status is Up |
+| Authentication failed | Wrong username/password/database name | Check environment variables in `docker-compose.yml` |
+| Port in use | Local PostgreSQL instance already running | `lsof -i :5432` to check occupying process |
 
 ---
 
-## 6. 命令行方式访问数据库
+## 6. Command Line Database Access
 
-如果不想用 GUI，可以直接通过 docker exec 进入 psql：
+If you prefer not to use a GUI, you can enter psql directly via docker exec:
 
 ```bash
-# 进入交互式 psql
+# Enter interactive psql
 docker exec -it foodie_postgres psql -U foodie -d foodie_share
 
-# 在 psql 内部：
-\dt              # 列出所有表
-\df              # 列出所有函数/存储过程
-\d users         # 查看 users 表结构
-SELECT * FROM users;   # 查询数据
-\q               # 退出 psql
+# Inside psql:
+\dt              # List all tables
+\df              # List all functions/stored procedures
+\d users         # View users table structure
+SELECT * FROM users;   # Query data
+\q               # Exit psql
 
-# 执行单条 SQL（不进入交互模式）
+# Execute single SQL (non-interactive)
 docker exec -i foodie_postgres psql -U foodie -d foodie_share -c "SELECT COUNT(*) FROM posts;"
 ```
 
 ---
 
-## 7. 数据库 Schema 更新
+## 7. Database Schema Updates
 
-`db/init/*.sql` 文件只在容器**首次创建**时执行一次。后续修改 SQL 文件不会自动同步到运行中的数据库。
+`db/init/*.sql` files are executed only once when the container is **first created**. Subsequent modifications to SQL files will not automatically sync to the running database.
 
-### 7.1 小规模修改（保留数据）
+### 7.1 Small Changes (Preserve Data)
 
-将修改写成 migration SQL 脚本，直接执行：
+Write changes as migration SQL scripts and execute directly:
 
 ```bash
-# 示例：执行迁移脚本
+# Example: Execute migration script
 docker exec -i foodie_postgres psql -U foodie -d foodie_share < db/migration_fix_comment_likes.sql
 ```
 
-### 7.2 大规模修改（重置数据）
+### 7.2 Large Changes (Reset Data)
 
-如果数据库结构变化很大，或者测试数据不重要：
+If the database structure changes significantly, or test data is not important:
 
 ```bash
 docker-compose down -v
 docker-compose up -d
 ```
 
-这会清空所有数据，重新执行 `db/init/` 目录下的所有 SQL 脚本。
+This clears all data and re-executes all SQL scripts in the `db/init/` directory.
 
 ---
 
-## 8. 快速检查清单
+## 8. Quick Checklist
 
-| 操作 | 命令 |
+| Operation | Command |
 |-----|------|
-| 启动全部服务 | `docker-compose up -d` |
-| 停止全部服务 | `docker-compose down` |
-| 查看日志 | `docker-compose logs -f` |
-| 重启后端（代码更新后） | `docker-compose up -d --build backend` |
-| 启动前端开发服务器 | `cd frontend && npm run dev` |
-| 进入数据库命令行 | `docker exec -it foodie_postgres psql -U foodie -d foodie_share` |
-| 执行 SQL 文件 | `docker exec -i foodie_postgres psql -U foodie -d foodie_share < file.sql` |
-| 查看所有存储过程 | `\df`（在 psql 中） |
-| 查看所有触发器 | `SELECT * FROM pg_trigger WHERE tgname LIKE 'trg_%';` |
+| Start all services | `docker-compose up -d` |
+| Stop all services | `docker-compose down` |
+| View logs | `docker-compose logs -f` |
+| Restart backend (after code update) | `docker-compose up -d --build backend` |
+| Start frontend dev server | `cd frontend && npm run dev` |
+| Enter database CLI | `docker exec -it foodie_postgres psql -U foodie -d foodie_share` |
+| Execute SQL file | `docker exec -i foodie_postgres psql -U foodie -d foodie_share < file.sql` |
+| View all stored procedures | `\df` (in psql) |
+| View all triggers | `SELECT * FROM pg_trigger WHERE tgname LIKE 'trg_%';` |
